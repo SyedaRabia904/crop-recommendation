@@ -13,36 +13,36 @@ CORS(app)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Load model and scaler
-model_path = os.path.join(BASE_DIR, "best_crop_model.pkl")
-scaler_path = os.path.join(BASE_DIR, "feature_scaler.pkl")
+model_path = os.path.join(BASE_DIR, 'best_crop_model.pkl')
+scaler_path = os.path.join(BASE_DIR, 'feature_scaler.pkl')
 
-with open(model_path, "rb") as f:
+with open(model_path, 'rb') as f:
     model = pickle.load(f)
 
-with open(scaler_path, "rb") as f:
+with open(scaler_path, 'rb') as f:
     scaler = pickle.load(f)
 
 
-@app.route("/api/")
+@app.route('/api/')
 def home():
     return jsonify({
-        "message": "Crop Recommendation API is running!"
+        'message': 'Crop Recommendation API is running!'
     })
 
 
-@app.route("/api/predict", methods=["POST"])
+@app.route('/api/predict', methods=['POST'])
 def predict():
     try:
-        data = request.get_json()
+        data = request.json
 
         # Extract values
-        N = float(data["nitrogen"])
-        P = float(data["phosphorus"])
-        K = float(data["potassium"])
-        Temperature = float(data["temperature"])
-        Humidity = float(data["humidity"])
-        pH = float(data["ph"])
-        Rainfall = float(data["rainfall"])
+        N = float(data['nitrogen'])
+        P = float(data['phosphorus'])
+        K = float(data['potassium'])
+        Temperature = float(data['temperature'])
+        Humidity = float(data['humidity'])
+        pH = float(data['ph'])
+        Rainfall = float(data['rainfall'])
 
         # Create input array
         input_data = np.array([[
@@ -69,15 +69,15 @@ def predict():
             confidence = None
 
         return jsonify({
-            "crop": str(prediction).upper(),
-            "confidence": confidence
+            'crop': str(prediction).upper(),
+            'confidence': confidence
         })
 
     except Exception as e:
         return jsonify({
-            "error": str(e)
+            'error': str(e)
         }), 400
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True, port=5000)
