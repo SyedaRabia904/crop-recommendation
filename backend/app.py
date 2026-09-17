@@ -12,34 +12,30 @@ CORS(app)
 # Get the folder where app.py is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Paths to model and scaler
+# Load model and scaler
 model_path = os.path.join(BASE_DIR, "best_crop_model.pkl")
 scaler_path = os.path.join(BASE_DIR, "feature_scaler.pkl")
 
-# Load model
 with open(model_path, "rb") as f:
     model = pickle.load(f)
 
-# Load scaler
 with open(scaler_path, "rb") as f:
     scaler = pickle.load(f)
 
 
-# Home route
-@app.route("/")
+@app.route("/api/")
 def home():
     return jsonify({
         "message": "Crop Recommendation API is running!"
     })
 
 
-# Prediction route
-@app.route("/predict", methods=["POST"])
+@app.route("/api/predict", methods=["POST"])
 def predict():
     try:
         data = request.get_json()
 
-        # Extract input values
+        # Extract values
         N = float(data["nitrogen"])
         P = float(data["phosphorus"])
         K = float(data["potassium"])
@@ -62,10 +58,10 @@ def predict():
         # Scale input
         input_scaled = scaler.transform(input_data)
 
-        # Make prediction
+        # Predict
         prediction = model.predict(input_scaled)[0]
 
-        # Calculate confidence if supported
+        # Confidence
         try:
             proba = model.predict_proba(input_scaled)[0]
             confidence = float(max(proba) * 100)
@@ -83,6 +79,5 @@ def predict():
         }), 400
 
 
-# Run locally
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
