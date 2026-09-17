@@ -23,14 +23,14 @@ with open(scaler_path, 'rb') as f:
     scaler = pickle.load(f)
 
 
-@app.route('/')
+@app.route('/api/')
 def home():
     return jsonify({
         'message': 'Crop Recommendation API is running!'
     })
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict():
     try:
         data = request.json
